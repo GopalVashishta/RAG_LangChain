@@ -10,6 +10,7 @@ Retrieval-Augmented Generation (RAG) project using LangChain, Sentence Transform
   - Notebook workflow: ChromaDB (`data/vector_store/`)
   - `src/` workflow: FAISS (`faiss_store/` by default at runtime)
 - RAG query answering with Groq (`simple`, `enhanced`, `advanced` patterns in notebook)
+- Agentic RAG workflow with LangGraph (`decide -> retrieve -> generate`) in `agenticrag/agenticrag.ipynb`
 
 ## Actual Project Structure
 
@@ -26,6 +27,8 @@ RAG/
 │   └── vector_store/
 │       ├── chroma.sqlite3
 │       └── f3828d17-731b-4d23-9234-12a3b06f22f2/
+├── agenticrag/
+│   └── agenticrag.ipynb
 ├── notebooks/
 │   ├── document.ipynb
 │   └── rag_pipeline.ipynb
@@ -61,6 +64,27 @@ flowchart LR
    J --> L[Advanced Output: history + optional summary]
 ```
 
+## Agentic RAG Flow (Based on `agenticrag/agenticrag.ipynb`)
+
+The agentic notebook builds a conditional LangGraph pipeline with a typed state:
+
+- `question`
+- `documents`
+- `answer`
+- `needs_retrieval`
+
+Flow used in the notebook:
+
+```mermaid
+flowchart LR
+   U[User Question] --> D[Decide Retrieval\nkeyword heuristic]
+   D -->|needs_retrieval = true| R[Retrieve Documents\nFAISS retriever k=3]
+   D -->|needs_retrieval = false| G0[Generate Direct Answer]
+   R --> G1[Generate RAG Answer\nwith retrieved context]
+   G0 --> O[Final Answer]
+   G1 --> O
+```
+
 ## Quick Start
 
 1. Create and activate environment
@@ -80,12 +104,14 @@ pip install -r requirements.txt
 
 ```env
 GROQ_API_KEY=your_groq_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-4. Run notebook pipeline
+4. Run notebook pipelines
 
 ```bash
 jupyter notebook notebooks/rag_pipeline.ipynb
+jupyter notebook agenticrag/agenticrag.ipynb
 ```
 
 ## Minimal `src/` Usage
@@ -108,5 +134,7 @@ print(answer)
 ## Notes
 
 - `notebooks/rag_pipeline.ipynb` demonstrates Simple, Enhanced, and Advanced RAG flows.
+- `agenticrag/agenticrag.ipynb` demonstrates Agentic RAG with LangGraph conditional routing.
 - `src/` modules implement a runnable FAISS-based pipeline.
 - ChromaDB artifacts currently exist under `data/vector_store/` from notebook workflow.
+- Agentic notebook uses OpenAI chat + embeddings and an in-memory FAISS retriever built from sample texts.
