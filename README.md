@@ -11,6 +11,7 @@ Retrieval-Augmented Generation (RAG) project using LangChain, Sentence Transform
   - `src/` workflow: FAISS (`faiss_store/` by default at runtime)
 - RAG query answering with Groq (`simple`, `enhanced`, `advanced` patterns in notebook)
 - Agentic RAG workflow with LangGraph (`decide -> retrieve -> generate`) in `agenticrag/agenticrag.ipynb`
+- RAG and chatbot evaluation with LangSmith in `rag_evaluation.ipynb`
 
 ## Actual Project Structure
 
@@ -18,6 +19,7 @@ Retrieval-Augmented Generation (RAG) project using LangChain, Sentence Transform
 RAG/
 ├── README.md
 ├── requirements.txt
+├── rag_evaluation.ipynb
 ├── data/
 │   ├── pdf/
 │   ├── text_files/
@@ -85,6 +87,26 @@ flowchart LR
    G1 --> O
 ```
 
+## RAG Evaluation Flow (Based on `rag_evaluation.ipynb`)
+
+This notebook evaluates both a basic chatbot and a RAG bot using LangSmith experiments.
+
+Main evaluation metrics used:
+
+- Correctness (vs reference answer)
+- Concision (response length check)
+- Relevance (response vs question)
+- Groundedness (response vs retrieved docs)
+- Retrieval relevance (retrieved docs vs question)
+
+```mermaid
+flowchart LR
+   A[Create Dataset in LangSmith] --> B[Run Target App\nchatbot or rag_bot]
+   B --> C[Collect Outputs\nanswers + optional retrieved docs]
+   C --> D[Run Evaluators\ncorrectness, concision, relevance, groundedness, retrieval relevance]
+   D --> E[Experiment Results\nLangSmith traces + scores]
+```
+
 ## Quick Start
 
 1. Create and activate environment
@@ -105,6 +127,8 @@ pip install -r requirements.txt
 ```env
 GROQ_API_KEY=your_groq_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
+LANGSMITH_API_KEY=your_langsmith_api_key_here
+LANGSMITH_TRACING=true
 ```
 
 4. Run notebook pipelines
@@ -112,6 +136,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 ```bash
 jupyter notebook notebooks/rag_pipeline.ipynb
 jupyter notebook agenticrag/agenticrag.ipynb
+jupyter notebook rag_evaluation.ipynb
 ```
 
 ## Minimal `src/` Usage
@@ -135,6 +160,7 @@ print(answer)
 
 - `notebooks/rag_pipeline.ipynb` demonstrates Simple, Enhanced, and Advanced RAG flows.
 - `agenticrag/agenticrag.ipynb` demonstrates Agentic RAG with LangGraph conditional routing.
+- `rag_evaluation.ipynb` demonstrates chatbot + RAG evaluation workflows with LangSmith.
 - `src/` modules implement a runnable FAISS-based pipeline.
 - ChromaDB artifacts currently exist under `data/vector_store/` from notebook workflow.
 - Agentic notebook uses OpenAI chat + embeddings and an in-memory FAISS retriever built from sample texts.

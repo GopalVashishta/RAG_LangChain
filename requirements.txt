@@ -1,6 +1,7 @@
 langchain 
 langchain-core
 langchain-community
+langchain-text-splitters
 langchain-openai
 langgraph
 pypdf
@@ -10,3 +11,8 @@ faiss-cpu
 chromadb
 langchain_groq
 python-dotenv
+langsmith
+openai
+beautifulsoup4
+tiktoken
+typing-extensions
